@@ -1,36 +1,35 @@
+const readLine = require('readline');
+
+const rl = readLine.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
+
 const questions = [
-    "What is your name?",
-    "What would you rather be doing?",
-    "What is your preferred programming language?"
+    "What is your name? ",
+    "Where do you live? ",
+    "What are you going to do with node.js? "
 ];
 
-const ask = (i = 0) => {
-    process.stdout.write(`\n\n\n ${questions[i]}`);
-    process.stdout.write(` > `)
+const collectAnswers = (questions, done) => {
+    const answers = [];
+    const [firstQuestion] = questions;
+    //done(answers)
+
+    const questionAnswered = answer => {
+        answers.push(answer);
+        if (answers.length < questions.length) {
+            rl.question(questions[answers.length], questionAnswered);
+        } else {
+            done(answers);
+        }
+    }
+
+    rl.question(firstQuestion, questionAnswered);
 }
 
-ask();
-
-const answers = [];
-process.stdin.on('data', (data) => {
-    answers.push(data.toString().trim());
-
-    if (answers.length < questions.length) {
-        ask(answers.length);
-    } else {
-        process.exit();
-    }
+collectAnswers(questions, answers => {
+    console.log("Thank you for your answers");
+    console.log(answers);
+    process.exit();
 });
-
-process.on('exit', () => {
-    const [name, activity, lang] = answers;
-    console.log(`
-    
-Thank you for your anwsers.
-
-Go ${activity} ${name} you can write ${lang} code later!!!
-
-
-    
-    `) 
-})
